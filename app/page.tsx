@@ -73,49 +73,87 @@ export default function Home() {
     },
   };
 
+  const pageLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `¿Cuántos festivos hay en Colombia en ${year}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `En Colombia hay ${holidays.length} días festivos nacionales oficiales en ${year}.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `¿Qué significa que un festivo se mueva al lunes?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Algunos festivos se trasladan al siguiente lunes según la Ley 51 de 1983 (Ley Emiliani), para crear puentes festivos.",
+        },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-[radial-gradient(1200px_circle_at_0%_0%,#fff3c4_0%,transparent_55%),radial-gradient(900px_circle_at_100%_10%,#c7e7ff_0%,transparent_52%),radial-gradient(900px_circle_at_70%_100%,#ffd2d2_0%,transparent_55%),linear-gradient(#ffffff,#f6f7fb)]">
       <main className="mx-auto max-w-7xl px-5 py-16">
         <header className="rounded-3xl border border-black/5 bg-white/90 p-8 shadow-sm backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-[#0b1220]">Calendario de festivos Colombia {year}</h1>
-              <p className="mt-2 max-w-2xl text-[15px] leading-7 text-zinc-600">
-                Días festivos nacionales de Colombia en formato calendario. Ideal para buscar “festivos Colombia {year}” o “días feriados Colombia {year}”.
+              <h1 className="text-4xl font-extrabold tracking-tight text-[#0b1220]">Calendario oficial de festivos en Colombia {year}</h1>
+              <h2 className="mt-2 text-base font-semibold text-zinc-700">Festivos Colombia {year} y días feriados (calendario)</h2>
+              <p className="mt-3 max-w-3xl text-[15px] leading-7 text-zinc-600">
+                Consulta el calendario completo de días festivos y feriados en Colombia {year}, incluyendo puentes festivos y fechas oficiales según la ley colombiana.
+                Aquí podrás ver el total de festivos del año, identificar si hoy es día festivo o día laboral y planificar vacaciones, viajes o actividades con anticipación.
               </p>
             </div>
-            <div className="flex items-center gap-2" aria-label="Colores de Colombia">
-              <span className="h-3 w-10 rounded-full bg-[#FCD116] ring-1 ring-black/10" />
-              <span className="h-3 w-10 rounded-full bg-[#003893] ring-1 ring-black/10" />
-              <span className="h-3 w-10 rounded-full bg-[#CE1126] ring-1 ring-black/10" />
-            </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
+          <section aria-label="Información del calendario" className="mt-6">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-12">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 lg:col-span-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-900 ring-1 ring-amber-200">📅</div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Total de festivos en Colombia {year}</div>
+                    <div className="mt-1 text-lg font-extrabold text-[#0b1220]">
+                      {holidays.length} <span className="text-sm font-semibold text-zinc-600">días oficiales</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 lg:col-span-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 text-[#0b1220] ring-1 ring-black/5">🇨🇴</div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">País</div>
+                    <div className="mt-1 text-lg font-extrabold text-[#0b1220]">Colombia</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:col-span-2 lg:col-span-5">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-900 ring-1 ring-blue-200">💡</div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Tip</div>
+                    <p className="mt-1 text-sm leading-6 text-zinc-600">Pasa el mouse o toca una fecha para ver el nombre completo del festivo.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="mt-5 flex flex-wrap gap-3 text-sm">
             <span className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-amber-900 ring-1 ring-amber-200">
-              <span className="h-2 w-2 rounded-full bg-amber-500" /> Festivo
+              <span className="h-4 w-1 rounded-full bg-gradient-to-b from-amber-400 to-amber-600" aria-hidden="true" /> Festivo
             </span>
             <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-blue-900 ring-1 ring-blue-200">
-              <span className="h-2 w-2 rounded-full bg-[#003893]" /> Hoy
+              <span className="h-3 w-3 rounded-md border border-[#003893]/30 bg-[#003893]/10" aria-hidden="true" /> Hoy
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-zinc-700 ring-1 ring-zinc-200">
-              <span className="h-2 w-2 rounded-full bg-zinc-300" /> Día normal
-            </span>
-          </div>
-
-          <div className="mt-6 grid gap-3 rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700 sm:grid-cols-3">
-            <div className="flex items-center justify-between gap-3">
-              <span className="font-medium text-zinc-600">Total festivos</span>
-              <span className="rounded-full bg-zinc-100 px-3 py-1 font-semibold text-[#0b1220]">{holidays.length}</span>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <span className="font-medium text-zinc-600">País</span>
-              <span className="rounded-full bg-zinc-100 px-3 py-1 font-semibold text-[#0b1220]">Colombia</span>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <span className="font-medium text-zinc-600">Tip</span>
-              <span className="text-right text-zinc-600">Hover/toca un festivo para ver el nombre completo</span>
-            </div>
           </div>
 
           <nav aria-label="Ir a un mes" className="mt-6">
@@ -270,6 +308,7 @@ export default function Home() {
         </section>
 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageLd) }} />
 
         <footer className="mt-10 text-sm text-zinc-600">
           <p>Solo Colombia ({year}). Festivos movibles y Pascua calculados programáticamente.</p>
