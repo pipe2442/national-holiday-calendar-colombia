@@ -1,4 +1,5 @@
 import getColombiaHolidays from "../lib/colombiaHolidays";
+import TodayMarker from "../components/TodayMarker";
 
 function daysInMonthUTC(year: number, monthIndex0: number) {
   return new Date(Date.UTC(year, monthIndex0 + 1, 0)).getUTCDate();
@@ -14,21 +15,10 @@ function isoToUTCDate(iso: string) {
   return new Date(Date.UTC(y, m - 1, d));
 }
 
-function todayISOInTimeZone(timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
-  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-  return `${get("year")}-${get("month")}-${get("day")}`;
-}
 
 export default function Home() {
   const year = 2026;
   const holidays = getColombiaHolidays(year);
-  const todayISO = todayISOInTimeZone("America/Bogota");
 
   const holidayByDate = new Map<string, string[]>();
   for (const h of holidays) {
@@ -96,17 +86,38 @@ export default function Home() {
     ],
   };
 
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Festivos Colombia 2026",
+    url: "https://festivoscolombia2026.com/",
+    inLanguage: "es-CO",
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Inicio",
+        item: "https://festivoscolombia2026.com/",
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-[radial-gradient(1200px_circle_at_0%_0%,#fff3c4_0%,transparent_55%),radial-gradient(900px_circle_at_100%_10%,#c7e7ff_0%,transparent_52%),radial-gradient(900px_circle_at_70%_100%,#ffd2d2_0%,transparent_55%),linear-gradient(#ffffff,#f6f7fb)]">
       <main className="mx-auto max-w-7xl px-5 py-16">
         <header className="rounded-3xl border border-black/5 bg-white/90 p-8 shadow-sm backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-[#0b1220]">Calendario oficial de festivos en Colombia {year}</h1>
-              <h2 className="mt-2 text-base font-semibold text-zinc-700">Festivos Colombia {year} y días feriados (calendario)</h2>
+              <h1 className="text-4xl font-extrabold tracking-tight text-[#0b1220]">Festivos Colombia {year}</h1>
               <p className="mt-3 max-w-3xl text-[15px] leading-7 text-zinc-600">
-                Consulta el calendario completo de días festivos y feriados en Colombia {year}, incluyendo puentes festivos y fechas oficiales según la ley colombiana.
-                Aquí podrás ver el total de festivos del año, identificar si hoy es día festivo o día laboral y planificar vacaciones, viajes o actividades con anticipación.
+                En este calendario de festivos Colombia {year} puedes consultar, mes a mes, los días feriados oficiales y los puentes festivos que se forman cuando algunas celebraciones se trasladan al lunes según la ley colombiana.
+                El objetivo es que encuentres rápido las fechas de descanso, confirmes si hoy es día laboral o festivo y planifiques con anticipación vacaciones, viajes, trámites o actividades.
+                Además, incluimos una lista completa de días festivos {year} en Colombia para que puedas copiar fechas, revisar nombres y tener una referencia clara durante todo el año.
               </p>
             </div>
           </div>
@@ -176,6 +187,7 @@ export default function Home() {
           aria-label={`Calendario de festivos de Colombia ${year}`}
           className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
+          <h2 className="sr-only">Calendario de festivos 2026 en Colombia</h2>
           {monthNames.map((monthName, monthIndex0) => {
             const days = daysInMonthUTC(year, monthIndex0);
             const first = new Date(Date.UTC(year, monthIndex0, 1));
@@ -224,7 +236,8 @@ export default function Home() {
                       const iso = `${year}-${String(monthIndex0 + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
                       const names = holidayByDate.get(iso) ?? [];
                       const isHoliday = names.length > 0;
-                      const isToday = iso === todayISO;
+                      // Today is highlighted client-side to avoid needing redeploys.
+                      const isToday = false;
 
                       const labelDate = isoToUTCDate(iso).toLocaleDateString("es-CO", {
                         weekday: "long",
@@ -239,17 +252,15 @@ export default function Home() {
                           key={iso}
                           aria-label={aria}
                           tabIndex={isHoliday ? 0 : -1}
+                          data-date={iso}
+                          data-holiday={isHoliday ? "1" : "0"}
                           className={
                             "relative h-9 sm:h-10 rounded-xl border px-2 py-1 transition-colors " +
                             (isHoliday
                               ? "group cursor-help border-amber-200 bg-amber-50 hover:bg-amber-100/60 focus:outline-none focus:ring-2 focus:ring-amber-300/50"
                               : "border-zinc-200 bg-white hover:bg-zinc-50") +
                             (isWeekendColumn && !isHoliday ? " bg-zinc-50/60" : "") +
-                            (isToday
-                              ? isHoliday
-                                ? " ring-2 ring-[#003893]/20"
-                                : " border-[#003893]/30 bg-[#003893]/5 ring-2 ring-[#003893]/20"
-                              : "")
+                            (isToday ? "" : "")
                           }
                         >
                           {isHoliday ? (
@@ -283,7 +294,7 @@ export default function Home() {
         </section>
 
         <section aria-labelledby="holidays-title" className="mt-10 rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-          <h2 id="holidays-title" className="text-2xl font-semibold text-[#0b1220]">Listado completo de festivos {year}</h2>
+          <h2 id="holidays-title" className="text-2xl font-semibold text-[#0b1220]">Lista de días festivos oficiales</h2>
           <p className="mt-2 text-sm leading-7 text-zinc-600">También lo dejamos en texto para facilitar búsqueda e indexación.</p>
 
           <ol className="mt-5 divide-y divide-zinc-100">
@@ -307,8 +318,18 @@ export default function Home() {
           </ol>
         </section>
 
+        <section aria-labelledby="bridges-title" className="mt-10 rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
+          <h2 id="bridges-title" className="text-2xl font-semibold text-[#0b1220]">Puentes festivos en 2026</h2>
+          <p className="mt-2 text-sm leading-7 text-zinc-600">
+            En Colombia, varios festivos se observan el lunes (Ley 51 de 1983), lo que facilita planear puentes festivos. En este calendario puedes identificar esos lunes y organizar descansos de fin de semana largo.
+          </p>
+        </section>
+
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+        <TodayMarker />
 
         <footer className="mt-10 text-sm text-zinc-600">
           <p>Solo Colombia ({year}). Festivos movibles y Pascua calculados programáticamente.</p>
